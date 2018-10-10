@@ -23,3 +23,7 @@ could very well be my new favorite tool of choice!
 I'm also using this project to reinforce some high level architecture design using the MVC 
 pattern I learned from classes. I hope that this project can reveal some insights into areas
 that I am lacking in expertise.
+
+I also might consider adding Travis support just for the heck of it. I've never used
+Travis as a CI tool, and maybe it might be fun to learn about it! That is, if I can figure out
+how to use it effectively for this tiny project.

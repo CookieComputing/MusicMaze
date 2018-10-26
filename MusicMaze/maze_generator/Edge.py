@@ -3,15 +3,22 @@ class Edge:
     an edge in a graph implies that the two vertices are connected. The most
     important interpretation of this Edge class is that it is an undirected
     edge, thus an edge implies that both vertices are connected bidirectionally.
+    An edge does not necessarily strictly connect two vertices physically: a
+    newly created edge does not automatically cause each vertice to become each
+    other's neighbor, but rather resembles a symbolic link between the two
+    vertices.
+
+    The best practices for edge connection is to first check if the two
+    vertices are neighbors using the edge's connected() function, and if they
+    are not, to then use connect_vertices() to connect the two nodes.
     """
 
     def __init__(self, vertice_one, vertice_two, weight=0):
-        """Initialize an edge. Upon initialization, this edge will connect the
-        two vertices by adding them as neighbors. The intended behavior is to
-        then have these two neighbors both linked by themselves as neighbors,
-        and also through this edge object. However, it is possible to create
-        indirect connections using the add_neighbor() function, but doing so
-        is discouraged and this edge connection technique is encouraged.
+        """Initialize an edge. Upon initialization, edges do not necessarily
+        connect vertices to one another, they are only "softly" connected by
+        the existence of this edge. In fact, it is possible to maintain multiple
+        edges that relate the same two vertices, but it is not necessarily
+        possible to reconnect these two edges several times.
 
         Args:
             vertice_one(Vertice): the "from" vertice to connect
@@ -23,15 +30,38 @@ class Edge:
         if not vertice_one or not vertice_two:
             raise ValueError("Given a null vertice as an arg")
 
-        if vertice_one.is_neighbor(vertice_two) \
-                or vertice_two.is_neighbor(vertice_one):
-            raise ValueError("Attempting to add duplicate neighbor")
-
-        vertice_one.add_neighbor(vertice_two)
-        vertice_two.add_neighbor(vertice_one)
         self.__vertice_one = vertice_one
         self.__vertice_two = vertice_two
         self.__weight = weight
+
+    def connected(self):
+        """Determines if the two vertices are connected in some fashion. The
+        term "connected" may refer to either a directional connection, or
+        a bidirectional connection, but cannot distinguish between who is
+        connected to who. To gain information about who is connected to who,
+        use the vertices' is_neighbor() function.
+
+        Returns:
+            boolean: Whether or not the two vertices represented in this edge
+                are physically connected
+        """
+        return self.__vertice_one.is_neighbor(self.__vertice_two) \
+            or self.__vertice_two.is_neighbor(self.__vertice_one)
+
+    def connect_vertices(self):
+        """Physically connects the two vertices together if they are not
+        already connected.
+
+        Raises:
+            ValueError if the two vertices are connected, either directionally
+                or bidirectionally
+        """
+        if self.__vertice_one.is_neighbor(self.__vertice_two) \
+                or self.__vertice_two.is_neighbor(self.__vertice_one):
+            raise ValueError("Attempting to add duplicate neighbor")
+
+        self.__vertice_one.add_neighbor(self.__vertice_two)
+        self.__vertice_two.add_neighbor(self.__vertice_one)
 
     def from_vertice(self):
         """Return the "from" vertice of this edge.

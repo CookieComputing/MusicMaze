@@ -6,9 +6,41 @@ from maze_generator.Vertice import Vertice
 
 class TestEdge(TestCase):
 
-    def test_edge_linking(self):
-        """When an edge is created, it should automatically link two vertices
-        together."""
+    def test_neighbor_linked_connect(self):
+        """Single directional connections should return true for the
+        edge connected() function"""
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+        edge = Edge(vertice1, vertice2)
+
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+        self.assertFalse(edge.connected())
+
+        vertice1.add_neighbor(vertice2)
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+        self.assertTrue(edge.connected())
+
+    def test_simple_connect(self):
+        """Ensure that the connection function works with simple connections"""
+
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+        edge = Edge(vertice1, vertice2)
+
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+        self.assertFalse(edge.connected())
+
+        edge.connect_vertices()
+        self.assertTrue(edge.connected())
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+
+    def test_symbolic_edge_linking(self):
+        """When an edge is created, it should not physically link the two edges
+        within initialization"""
 
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
@@ -18,8 +50,24 @@ class TestEdge(TestCase):
 
         Edge(vertice1, vertice2)
 
-        self.assertTrue(vertice1.is_neighbor(vertice2))
-        self.assertTrue(vertice2.is_neighbor(vertice1))
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+
+    def test_edge_linking_when_connection_exists(self):
+        """Edges should not be able to be created if the edge has already
+        connected the two vertices"""
+
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        edge = Edge(vertice1, vertice2)
+        edge.connect_vertices()
+
+        try:
+            edge.connect_vertices()
+            self.fail("Should not be able to connect vertices twice")
+        except ValueError as e:
+            self.assertEqual("Attempting to add duplicate neighbor", str(e))
 
     def test_edge_linking_when_another_edge_exists(self):
         """Edges should not be able to be created if another edge
@@ -28,10 +76,12 @@ class TestEdge(TestCase):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        Edge(vertice1, vertice2)
+        edge = Edge(vertice1, vertice2)
+        edge.connect_vertices()
 
         try:
-            Edge(vertice1, vertice2)
+            y = Edge(vertice1, vertice2)
+            y.connect_vertices()
             self.fail("Another edge should not be able to be created")
         except ValueError as e:
             self.assertEqual("Attempting to add duplicate neighbor", str(e))
@@ -43,14 +93,16 @@ class TestEdge(TestCase):
         vertice2 = Vertice("two")
 
         vertice1.add_neighbor(vertice2)
+        edge1 = Edge(vertice1, vertice2)
         try:
-            Edge(vertice1, vertice2)
+            edge1.connect_vertices()
             self.fail("Another edge should not be able to be created")
         except ValueError as e:
             self.assertEqual("Attempting to add duplicate neighbor", str(e))
 
+        edge2 = Edge(vertice2, vertice1)
         try:
-            Edge(vertice2, vertice1)
+            edge2.connect_vertices()
             self.fail("Another edge should not be able to be created")
         except ValueError as e:
             self.assertEqual("Attempting to add duplicate neighbor", str(e))
@@ -68,8 +120,9 @@ class TestEdge(TestCase):
         vertice1.add_neighbor(vertice2)
         vertice2.add_neighbor(vertice1)
 
+        edge = Edge(vertice1, vertice2)
         try:
-            Edge(vertice1, vertice2)
+            edge.connect_vertices()
             self.fail("Another edge should not be able to be created")
         except ValueError as e:
             self.assertEqual("Attempting to add duplicate neighbor", str(e))
@@ -78,30 +131,28 @@ class TestEdge(TestCase):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        e = Edge(vertice1, vertice2)
+        edge = Edge(vertice1, vertice2)
 
-        self.assertEqual(vertice1, e.from_vertice())
+        self.assertEqual(vertice1, edge.from_vertice())
 
     def test_edge_to_vertice(self):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        e = Edge(vertice1, vertice2)
+        edge = Edge(vertice1, vertice2)
 
-        self.assertEqual(vertice2, e.to_vertice())
+        self.assertEqual(vertice2, edge.to_vertice())
 
     def test_default_edge_weight(self):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        e = Edge(vertice1, vertice2)
-        self.assertEqual(0, e.weight())
+        edge = Edge(vertice1, vertice2)
+        self.assertEqual(0, edge.weight())
 
     def test_custom_edge_weight(self):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        e = Edge(vertice1, vertice2, 5)
-        self.assertEqual(5, e.weight())
-
-
+        edge = Edge(vertice1, vertice2, 5)
+        self.assertEqual(5, edge.weight())

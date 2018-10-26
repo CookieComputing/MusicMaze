@@ -46,6 +46,13 @@ class TestVertice(TestCase):
         self.assertTrue(vertice1.is_neighbor(vertice2))
         self.assertFalse(vertice2.is_neighbor(vertice1))
 
+    def test_name(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        self.assertEqual("one", vertice1.name())
+        self.assertEqual("two", vertice2.name())
+
     def test_vertice_with_null_name(self):
         try:
             Vertice("")

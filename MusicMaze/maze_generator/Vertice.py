@@ -65,3 +65,10 @@ class Vertice:
             neighbors(list(Vertice)): This vertice's neigbhors
         """
         return [vertice for vertice in self.__neighbors]
+
+    def name(self):
+        """Return the unique name of this vertice.
+
+        Returns:
+            str: the name of this vertice"""
+        return self.__name

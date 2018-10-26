@@ -35,12 +35,14 @@ class Vertice:
             neighbor(Vertice): the vertice to become a neighbor to
         Raises:
             ValueError: If given a null neighbor or attempting to add itself
-                as a potential neighbor
+                as a potential neighbor, or if adding a duplicate neighbor
         """
         if not neighbor:
             raise ValueError("Given invalid neighbor")
         if neighbor == self:
             raise ValueError("Vertice cannot become it's own neighbor")
+        if neighbor in self.__neighbors:
+            raise ValueError("Attempting to add duplicate neighbor")
         self.__neighbors.append(neighbor)
 
     def is_neighbor(self, potential_neighbor):

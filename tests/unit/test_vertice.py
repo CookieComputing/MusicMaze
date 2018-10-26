@@ -71,3 +71,15 @@ class TestVertice(TestCase):
             self.fail("Should not allow self referential neighboring")
         except ValueError as e:
             self.assertEqual("Vertice cannot become it's own neighbor", str(e))
+
+    def test_vertice_given_duplicate(self):
+        """Duplicate neighbors are considered illegal behavior"""
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        vertice1.add_neighbor(vertice2)
+        try:
+            vertice1.add_neighbor(vertice2)
+            self.fail("Should not be able to add a duplicate neighbor")
+        except ValueError as e:
+            self.assertEqual("Attempting to add duplicate neighbor", str(e))

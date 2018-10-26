@@ -10,7 +10,7 @@ class Graph:
     This maze is interpreted as a 2D grid of cells, where the cells can be
     interpreted as if they were in (row, col) form. Thus, if the list of
     vertices called from the graph can be interpreted as being neighboring
-    vertices if they are indexed next to each other."""
+    vertices if they are indexed next to each other"""
 
     def __init__(self, size=1):
         """Initialize the graph with the initial dimensions of the grid. The

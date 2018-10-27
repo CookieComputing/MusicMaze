@@ -111,6 +111,11 @@ class TestGraph(TestCase):
             self.assertTrue(any([edge_equal(edge, row, 0, row+1, 0)
                                  for edge in g.edges()]))
 
+    def test_default_graph_edges(self):
+        """There should be no graphs in a graph with one vertice"""
+        g = Graph()
+        self.assertEqual([], g.edges())
+
     def test_invalid_width(self):
         try:
             Graph(-1, 3)

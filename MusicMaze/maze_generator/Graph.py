@@ -64,12 +64,16 @@ class Graph:
         vertices first before calling this method."""
 
         self.__edges = []
+        random_min = 0
+        random_max = 10000
 
         # add all horizontal edges first
         for row in range(self.__height):
             for col in range(self.__width-1):
                 self.__edges.append(Edge(self.__vertices[row][col],
-                                         self.__vertices[row][col+1]))
+                                         self.__vertices[row][col+1],
+                                         random.randint(random_min,
+                                                        random_max)))
 
         if self.__height == 1:
             return
@@ -78,7 +82,9 @@ class Graph:
         for row in range(0, self.__height-1):
             for col in range(self.__width):
                 self.__edges.append(Edge(self.__vertices[row][col],
-                                         self.__vertices[row+1][col]))
+                                         self.__vertices[row+1][col],
+                                         random.randint(random_min,
+                                                        random_max)))
 
     def __generate_vertices(self):
         """Using the size parameter supplied upon initialization, construct

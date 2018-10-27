@@ -14,17 +14,6 @@ def kruskal(graph):
     Returns:
         list(Edge): a list of edges from the graph forming the MST
     """
-    results = []
-    pq = PriorityQueue()
-
-    union_find = {}
-    for row in graph.vertices():
-        for vertice in row:
-            union_find[vertice.name()] = vertice.name()
-
-    for edge in graph.edges():
-        pq.push(edge)
-
     def union(tree_one, tree_two):
         """Union the two trees if they are from separate trees. We make the
         arbitrary decision to merge the second to the first."""
@@ -35,6 +24,17 @@ def kruskal(graph):
         if union_find[vertice_name] == vertice_name:
             return vertice_name
         return find(union_find[vertice_name])
+
+    results = []
+    pq = PriorityQueue()
+
+    union_find = {}
+    for row in graph.vertices():
+        for vertice in row:
+            union_find[vertice.name()] = vertice.name()
+
+    for edge in graph.edges():
+        pq.push(edge)
 
     while not pq.is_empty():
         min_edge = pq.extract_min()

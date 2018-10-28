@@ -54,7 +54,7 @@ class TestKruskal(TestCase):
         edge12 = Edge(v12, v22, random.randint(random_min, random_max))
 
         test_edges = sorted([edge1, edge3, edge4, edge5,
-                               edge7, edge9, edge11, edge12],
+                            edge7, edge9, edge11, edge12],
                             key=lambda x: x.weight())
 
         for index in range(len(kruskal_edges)):
@@ -176,7 +176,7 @@ class TestKruskal(TestCase):
 
         random.seed(1)
         edge1 = Edge(v00, v01, random.randint(random_min, random_max))
-        Edge(v10, v11, random.randint(random_min, random_max)) # Edge not needed
+        Edge(v10, v11, random.randint(random_min, random_max))
         edge3 = Edge(v00, v10, random.randint(random_min, random_max))
         edge4 = Edge(v01, v11, random.randint(random_min, random_max))
         test_edges = [edge3, edge1, edge4]
@@ -213,7 +213,6 @@ class TestKruskal(TestCase):
                                    random.randint(1, 10000)))
         test_edges = sorted(test_edges, key=lambda x: x.weight())
 
-
         for index in range(len(test_edges)):
             self.assertEqual("({0}, {1})".format(
                 kruskal_edges[index].from_vertice().name(),
@@ -223,36 +222,6 @@ class TestKruskal(TestCase):
                 test_edges[index].to_vertice().name()
             ))
 
-    def test_simple_horizontal_graph(self):
-        """A horizontal graph should give the same set of edges, possibly in
-        a different order thanks to the random weights"""
-        width = 1
-        height = 5
-        seed = 1
-        g = Graph(width, height, seed)
-        kruskal_edges = kruskal(g)
-        self.assertEqual(4, len(kruskal_edges))
-
-        test_vertices = []
-        for row in range(height):
-            test_vertices.append(Vertice("({0}, {1})".format(row, 0)))
-
-        random.seed(seed)
-        test_edges = []
-        for row in range(height-1):
-            test_edges.append(Edge(test_vertices[row], test_vertices[row+1],
-                                   random.randint(1, 10000)))
-        test_edges = sorted(test_edges, key=lambda x: x.weight())
-
-        for index in range(len(test_edges)):
-            self.assertEqual("({0}, {1})".format(
-                kruskal_edges[index].from_vertice().name(),
-                kruskal_edges[index].to_vertice().name()),
-                "({0}, {1})".format(
-                    test_edges[index].from_vertice().name(),
-                    test_edges[index].to_vertice().name()
-                ))
-
     def test_empty_graph(self):
-        g = Graph(1,1)
+        g = Graph(1, 1)
         self.assertEqual([], kruskal(g))

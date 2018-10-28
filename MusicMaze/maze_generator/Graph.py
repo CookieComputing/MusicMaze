@@ -20,8 +20,8 @@ class Graph:
 
     def __init__(self, width=1, height=1, seed=None):
         """Initialize the graph with the initial dimensions of the grid. The
-        grid is a width * height board containing width * height vertices that can
-        be referenced by (row, col). Initially, all vertices will be
+        grid is a width * height board containing width * height vertices that
+        can be referenced by (row, col). Initially, all vertices will be
         connected to their neighboring cells, and this can only be changed
         by calling the generate_maze() function.
 

@@ -47,4 +47,3 @@ def kruskal(graph):
             results.append(min_edge)
 
     return results
-

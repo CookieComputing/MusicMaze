@@ -32,12 +32,12 @@ class TestKruskal(TestCase):
         v20 = Vertice("(2, 0)")
         v21 = Vertice("(2, 1)")
         v22 = Vertice("(2, 2)")
-
         # o - o   o
         # |       |
         # o - o - o
         #     |   |
         # o - o   o
+
         random.seed(seed)
         edge1 = Edge(v00, v01, random.randint(random_min, random_max))
         Edge(v01, v02, random.randint(random_min, random_max))
@@ -155,7 +155,6 @@ class TestKruskal(TestCase):
                     kruskal_edges[index].to_vertice().name())
             )
 
-
     def test_two_by_two_graph(self):
         width = 2
         height = 2
@@ -166,12 +165,10 @@ class TestKruskal(TestCase):
 
         kruskal_edges = kruskal(g)
         self.assertEqual(3, len(kruskal_edges))
-
         # o - o
         #     |
         # o - o
 
-        #v(row)(col)
         v00 = Vertice("(0, 0)")
         v01 = Vertice("(0, 1)")
         v10 = Vertice("(1, 0)")
@@ -202,6 +199,9 @@ class TestKruskal(TestCase):
         seed = 1
         g = Graph(width, height, seed)
 
+        kruskal_edges = kruskal(g)
+        self.assertEqual(4, len(kruskal_edges))
+
         test_vertices = []
         for col in range(width):
             test_vertices.append(Vertice("({0}, {1})".format(0, col)))
@@ -213,8 +213,6 @@ class TestKruskal(TestCase):
                                    random.randint(1, 10000)))
         test_edges = sorted(test_edges, key=lambda x: x.weight())
 
-        kruskal_edges = kruskal(g)
-        self.assertEqual(4, len(kruskal_edges))
 
         for index in range(len(test_edges)):
             self.assertEqual("({0}, {1})".format(
@@ -232,6 +230,8 @@ class TestKruskal(TestCase):
         height = 5
         seed = 1
         g = Graph(width, height, seed)
+        kruskal_edges = kruskal(g)
+        self.assertEqual(4, len(kruskal_edges))
 
         test_vertices = []
         for row in range(height):
@@ -243,9 +243,6 @@ class TestKruskal(TestCase):
             test_edges.append(Edge(test_vertices[row], test_vertices[row+1],
                                    random.randint(1, 10000)))
         test_edges = sorted(test_edges, key=lambda x: x.weight())
-
-        kruskal_edges = kruskal(g)
-        self.assertEqual(4, len(kruskal_edges))
 
         for index in range(len(test_edges)):
             self.assertEqual("({0}, {1})".format(

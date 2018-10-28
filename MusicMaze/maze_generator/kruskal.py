@@ -17,7 +17,7 @@ def kruskal(graph):
     def union(tree_one, tree_two):
         """Union the two trees if they are from separate trees. We make the
         arbitrary decision to merge the second to the first."""
-        union_find[tree_two] = find(tree_one)
+        union_find[find(tree_two)] = find(tree_one)
 
     def find(vertice_name):
         """Finds the root of this vertice's tree."""
@@ -42,7 +42,7 @@ def kruskal(graph):
         vertice_one = min_edge.from_vertice().name()
         vertice_two = min_edge.to_vertice().name()
 
-        if union_find[vertice_one] != union_find[vertice_two]:
+        if find(vertice_one) != find(vertice_two):
             union(vertice_one, vertice_two)
             results.append(min_edge)
 

@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from maze_generator.Edge import Edge
-from maze_generator.PriorityQueue import PriorityQueue
-from maze_generator.Vertice import Vertice
+from model.graph.Edge import Edge
+from model.graph.PriorityQueue import PriorityQueue
+from model.graph.Vertice import Vertice
 
 
 class TestPriorityQueue(TestCase):

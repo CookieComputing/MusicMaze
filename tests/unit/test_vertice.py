@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from maze_generator.Vertice import Vertice
+from model.graph.Vertice import Vertice
 
 
 class TestVertice(TestCase):

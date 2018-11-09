@@ -6,7 +6,7 @@ from model.graph.Vertice import Vertice
 class TestVertice(TestCase):
     """This class represents examples and test cases for a vertice in a graph"""
 
-    def test_adding_neigbhors_to_vertice(self):
+    def test_adding_neighbors_to_vertice(self):
         """Adding neighbors should be directional, only."""
 
         vertice1 = Vertice("one")

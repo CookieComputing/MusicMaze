@@ -53,79 +53,75 @@ class TestEdge(TestCase):
         self.assertFalse(vertice1.is_neighbor(vertice2))
         self.assertFalse(vertice2.is_neighbor(vertice1))
 
-    def test_edge_linking_when_connection_exists(self):
-        """Edges should not be able to be created if the edge has already
-        connected the two vertices"""
+    def test_edge_linking_idempotency(self):
+        """Multiple connections should be simply idempotent."""
 
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
         edge = Edge(vertice1, vertice2)
+
+        self.assertFalse(edge.connected())
         edge.connect_vertices()
-
-        try:
-            edge.connect_vertices()
-            self.fail("Should not be able to connect vertices twice")
-        except ValueError as e:
-            self.assertEqual("Attempting to add duplicate neighbor", str(e))
-
-    def test_edge_linking_when_another_edge_exists(self):
-        """Edges should not be able to be created if another edge
-        exists already"""
-
-        vertice1 = Vertice("one")
-        vertice2 = Vertice("two")
-
-        edge = Edge(vertice1, vertice2)
+        self.assertTrue(edge.connected())
         edge.connect_vertices()
+        self.assertTrue(edge.connected())
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
 
-        try:
-            y = Edge(vertice1, vertice2)
-            y.connect_vertices()
-            self.fail("Another edge should not be able to be created")
-        except ValueError as e:
-            self.assertEqual("Attempting to add duplicate neighbor", str(e))
-
-    def test_edge_linking_with_one_link(self):
-        """Directional neighbors should also raise errors on edge creation"""
-
+    def test_single_direction_connection_to_both_connected(self):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
         vertice1.add_neighbor(vertice2)
-        edge1 = Edge(vertice1, vertice2)
-        try:
-            edge1.connect_vertices()
-            self.fail("Another edge should not be able to be created")
-        except ValueError as e:
-            self.assertEqual("Attempting to add duplicate neighbor", str(e))
+        edge = Edge(vertice1, vertice2)
+        self.assertTrue(edge.connected())
 
-        edge2 = Edge(vertice2, vertice1)
-        try:
-            edge2.connect_vertices()
-            self.fail("Another edge should not be able to be created")
-        except ValueError as e:
-            self.assertEqual("Attempting to add duplicate neighbor", str(e))
-
-        # there should be no side effect with vertice 2 having vertice as
-        # a neighbor
         self.assertTrue(vertice1.is_neighbor(vertice2))
         self.assertFalse(vertice2.is_neighbor(vertice1))
+        edge.connect_vertices()
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
 
-    def test_edge_linking_with_two_links(self):
-
+    def test_single_direction_connection_both_connected_other_way(self):
+        """This should be equivalent as the previous test"""
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")
 
-        vertice1.add_neighbor(vertice2)
         vertice2.add_neighbor(vertice1)
+        edge = Edge(vertice1, vertice2)
+        self.assertTrue(edge.connected())
+
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+        edge.connect_vertices()
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+
+    def test_edge_disconnect_idempotency(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
 
         edge = Edge(vertice1, vertice2)
-        try:
-            edge.connect_vertices()
-            self.fail("Another edge should not be able to be created")
-        except ValueError as e:
-            self.assertEqual("Attempting to add duplicate neighbor", str(e))
+        edge.connect_vertices()
+
+        self.assertTrue(edge.connected())
+        edge.disconnect_vertices()
+        self.assertFalse(edge.connected())
+        edge.disconnect_vertices()
+        self.assertFalse(edge.connected())
+
+    def test_edge_disconnection_single_connection(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        edge = Edge(vertice1, vertice2)
+        vertice1.add_neighbor(vertice2)
+
+        self.assertTrue(edge.connected())
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        edge.disconnect_vertices()
+        self.assertFalse(vertice1.is_neighbor(vertice2))
 
     def test_edge_from_vertice(self):
         vertice1 = Vertice("one")

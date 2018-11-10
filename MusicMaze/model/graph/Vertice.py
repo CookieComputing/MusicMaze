@@ -73,7 +73,8 @@ class Vertice:
     def neighbors(self):
         """Returns a list of this vertice's neighbors. Since this is an
         internal implementation detail, we make the choice to allow the
-        vertice to return actual references to other vertices.
+        vertice to return actual references to other vertices. There is
+        no guarantee of the order of the neighbors.
 
         Returns:
             neighbors(list(Vertice)): This vertice's neighbors

@@ -8,9 +8,10 @@ class Edge:
     other's neighbor, but rather resembles a symbolic link between the two
     vertices.
 
-    The best practices for edge connection is to first check if the two
-    vertices are neighbors using the edge's connected() function, and if they
-    are not, to then use connect_vertices() to connect the two nodes.
+    The edges are only connected once connect_vertices() is called, and will
+    link both vertices regardless of whether one had already been called.
+    disconnect_vertices() will sever the connections between the two classes,
+    regardless of whether they were formed or not.
     """
 
     def __init__(self, vertice_one, vertice_two, weight=0):
@@ -50,18 +51,21 @@ class Edge:
 
     def connect_vertices(self):
         """Physically connects the two vertices together if they are not
-        already connected.
-
-        Raises:
-            ValueError if the two vertices are connected, either directionally
-                or bidirectionally
+        already connected. This function is idempotent.
         """
-        if self.__vertice_one.is_neighbor(self.__vertice_two) \
-                or self.__vertice_two.is_neighbor(self.__vertice_one):
-            raise ValueError("Attempting to add duplicate neighbor")
 
-        self.__vertice_one.add_neighbor(self.__vertice_two)
-        self.__vertice_two.add_neighbor(self.__vertice_one)
+        if not self.__vertice_one.is_neighbor(self.__vertice_two):
+            self.__vertice_one.add_neighbor(self.__vertice_two)
+        if not self.__vertice_two.is_neighbor(self.__vertice_one):
+            self.__vertice_two.add_neighbor(self.__vertice_one)
+
+    def disconnect_vertices(self):
+        """Physically disconnects the vertices if they are connected.
+        This function is idempotent."""
+        if self.__vertice_one.is_neighbor(self.__vertice_two):
+            self.__vertice_one.remove_neighbor(self.__vertice_two)
+        if self.__vertice_two.is_neighbor(self.__vertice_one):
+            self.__vertice_two.remove_neighbor(self.__vertice_one)
 
     def from_vertice(self):
         """Return the "from" vertice of this edge.

@@ -24,13 +24,18 @@ class TestVertice(TestCase):
 
         # other vertices should also not experience side effects
         vertice1.add_neighbor(vertice3)
-        self.assertEqual([vertice2, vertice3], vertice1.neighbors())
+        self.assertEqual(2, len(vertice1.neighbors()))
+        self.assertTrue(vertice2 in vertice1.neighbors())
+        self.assertTrue(vertice3 in vertice1.neighbors())
         self.assertEqual([], vertice2.neighbors())
         self.assertEqual([], vertice3.neighbors())
 
         vertice2.add_neighbor(vertice1)
-        self.assertEqual([vertice2, vertice3], vertice1.neighbors())
-        self.assertEqual([vertice1], vertice2.neighbors())
+        self.assertEqual(2, len(vertice1.neighbors()))
+        self.assertTrue(vertice2 in vertice1.neighbors())
+        self.assertTrue(vertice3 in vertice1.neighbors())
+        self.assertEqual(1, len(vertice2.neighbors()))
+        self.assertTrue(vertice1 in vertice2.neighbors())
         self.assertEqual([], vertice3.neighbors())
 
     def test_is_neighbor(self):
@@ -45,6 +50,47 @@ class TestVertice(TestCase):
         vertice1.add_neighbor(vertice2)
         self.assertTrue(vertice1.is_neighbor(vertice2))
         self.assertFalse(vertice2.is_neighbor(vertice1))
+
+    def test_remove_single_neighbor_single_direction(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        vertice1.add_neighbor(vertice2)
+        vertice2.add_neighbor(vertice1)
+
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+
+        vertice1.remove_neighbor(vertice2)
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+
+    def test_remove_single_neighbor_one_direction(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        vertice1.add_neighbor(vertice2)
+
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+
+        vertice1.remove_neighbor(vertice2)
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+
+    def test_remove_single_neighbor_multiple_neighbors(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+        vertice3 = Vertice("three")
+
+        vertice1.add_neighbor(vertice2)
+        vertice1.add_neighbor(vertice3)
+
+        self.assertTrue(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice1.is_neighbor(vertice3))
+        vertice1.remove_neighbor(vertice2)
+        self.assertFalse(vertice1.is_neighbor(vertice2))
+        self.assertTrue(vertice1.is_neighbor(vertice3))
 
     def test_name(self):
         vertice1 = Vertice("one")
@@ -90,3 +136,24 @@ class TestVertice(TestCase):
             self.fail("Should not be able to add a duplicate neighbor")
         except ValueError as e:
             self.assertEqual("Attempting to add duplicate neighbor", str(e))
+
+    def test_remove_non_existent_neighbor(self):
+        vertice = Vertice("one")
+        try:
+            vertice.remove_neighbor(Vertice("non existent"))
+            self.fail("Should not be able to remove a non existent vertice")
+        except ValueError as e:
+            self.assertEqual("Neighbor does not exist to remove", str(e))
+
+    def test_remove_vertice_with_same_name_as_neighbor(self):
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        vertice1.add_neighbor(vertice2)
+        try:
+            vertice1.remove_neighbor(Vertice("two"))
+            self.fail("A vertice with the same name does not "
+                      "count as the same neighbor")
+        except ValueError as e:
+            self.assertEqual("Given vertice "
+                             "is not the actual vertice neighbor", str(e))

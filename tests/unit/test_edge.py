@@ -123,6 +123,19 @@ class TestEdge(TestCase):
         edge.disconnect_vertices()
         self.assertFalse(vertice1.is_neighbor(vertice2))
 
+    def test_edge_disconnection_single_connection_other_way(self):
+        """Should be equivalent to previous test"""
+        vertice1 = Vertice("one")
+        vertice2 = Vertice("two")
+
+        edge = Edge(vertice1, vertice2)
+        vertice2.add_neighbor(vertice1)
+
+        self.assertTrue(edge.connected())
+        self.assertTrue(vertice2.is_neighbor(vertice1))
+        edge.disconnect_vertices()
+        self.assertFalse(vertice2.is_neighbor(vertice1))
+
     def test_edge_from_vertice(self):
         vertice1 = Vertice("one")
         vertice2 = Vertice("two")

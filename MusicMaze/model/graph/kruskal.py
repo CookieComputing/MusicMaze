@@ -29,8 +29,7 @@ def kruskal(graph):
     pq = PriorityQueue()
 
     union_find = {}
-    for row in graph.vertices():
-        for vertice in row:
+    for vertice in graph.vertices():
             union_find[vertice.name()] = vertice.name()
 
     for edge in graph.edges():

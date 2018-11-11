@@ -1,3 +1,7 @@
+from model.graph.Edge import Edge
+from model.graph.Vertice import Vertice
+
+
 class Graph:
     """This class represents an implementation of a graph. The graph is a
     set of vertices and edges, and is interpreted using an adjacency list
@@ -5,102 +9,119 @@ class Graph:
     is not a maze, but an rather interpretation of a connected tree of nodes.
     The class is an undirected simple graph, and as such will have unique
     edges that are bidirectional.
+
+    This Graph class should be the main point of contact between the graph
+    and any operations involving the vertices and edges of this graph,
+    operating as the primary interface of the graph and its associated classes.
   """
 
     def __init__(self):
         """Initializes the graph as an initially empty graph. All vertices
         and edges must subsequently be added to the graph.
         """
-        self.__vertices = set()
-        self.__vertice_ids = set()
+        self.__vertices = dict()
 
-        # The edges are held in a dictionary whose keys are of the form
-        # "from - to"
-        # where from and to represent the names of the vertices
-        self.__edges = {}
+        # Edges are represented in the form
+        #  "{a} - {b}".format(a.name(), b.name))
+        self.__edges = dict()
+        self.__edge_key = "{0} - {1}"
 
-    def add_vertice(self, vertice):
+    def add_vertice(self, vertice_name):
         """Adds a given vertice into the graph. The vertice must be a new
         object and should also have a unique name identifying the vertice.
 
         Args:
-            vertice(Vertice): the given vertice to add
+            vertice_name(str): the name of the new vertice to add
         Raises:
             ValueError: if another vertice exists in the graph with the same
                 name as the given vertice"""
-        if self.contains_vertice_with_name(vertice.name()) \
-                or self.contains_vertice(vertice):
-            raise ValueError("Graph already contains vertice with same name")
-        self.__vertice_ids.add(vertice.name())
-        self.__vertices.add(vertice)
+        if self.contains_vertice(vertice_name):
+            raise ValueError("Vertice already in the graph")
+        self.__vertices[vertice_name] = Vertice(vertice_name)
 
-    def contains_vertice(self, vertice):
+    def contains_vertice(self, vertice_name):
         """Determines if a specific vertice exists in the graph. The vertice
         should be a physical object in the graph if it is contained.
 
         Args:
-            vertice(Vertice): the given vertice to check
+            vertice_name(str): the given vertice to check
         Returns:
             boolean: Whether or not the vertice in question is in the graph"""
-        return vertice in self.__vertices
+        return vertice_name in self.__vertices
 
-    def contains_vertice_with_name(self, name):
-        """Determines if a specific vertice with a given name is in the graph.
-
-        Args:
-            name(str): the name of a vertice in the graph
-        Returns:
-            boolean: Whether or not such a vertice with a name exists"""
-        return name in self.__vertice_ids
-
-    def add_edge(self, edge):
+    def add_edge(self, v1, v2, weight=0):
         """Adds an edge to this graph only if that edge does not already
         exist. In our interpretation of the program, this means an undirected
         edge. Furthermore, only edges containing vertices that actually
         exist in the graph are acceptable.
 
-        Raises:
-            ValueError: if the edge attempting to be added already exists.
-            ValueError: if the edge in question contains vertices that do
-                not exist in the graph"""
-        if self.contains_edge(edge):
-            raise ValueError("Given an edge that already exists")
-        if not self.contains_vertice(edge.from_vertice()) \
-                or not self.contains_vertice(edge.to_vertice()):
-            raise ValueError("Edge contains vertice not in graph")
-        edge_name = edge.from_vertice().name() \
-                    + " - " \
-                    + edge.to_vertice().name()
-        self.__edges[edge_name] = edge
+        Note that since this is an undirected graph, adding an edge with
+        either vertice as v1 or v2 will be the same edge. Adding an edge is
+        also idempotent, and will also connect the vertices.
 
-    def contains_edge(self, edge):
+        Args:
+            v1(str): The name of one of the vertices in the edge
+            v2(str): The name of the other vertice in the edge.
+            weight(int): the weight of the graph, which is non-negative
+        Raises:
+            ValueError: if the edge in question contains vertices that do
+                not exist in the graph
+            ValueError: if the weight is negative"""
+        if v1 not in self.__vertices or v2 not in self.__vertices:
+            raise ValueError("Vertice contained in edge not in graph")
+        vertice_one = self.__vertices[v1]
+        vertice_two = self.__vertices[v2]
+        edge = Edge(vertice_one, vertice_two, weight)
+        edge.connect_vertices()
+        self.__edges[self.__edge_key.format(v1, v2)] = edge
+
+    def remove_edge(self, v1, v2):
+        """Removes the given edge from the graph. Removing the edge will
+        cause the graph to disconnect the vertices from each other.
+
+        Removing an edge is idempotent, and will not raise exceptions if no
+        such edge exists
+
+        Args:
+            v1(str): the name of the first vertice in the edge
+            v2(str): the name of the second vertice in the edge"""
+        if self.__edge_key.format(v1, v2) in self.__edges:
+            formatted_edge_key = self.__edge_key.format(v1, v2)
+            edge = self.__edges[formatted_edge_key]
+            edge.disconnect_vertices()
+            del self.__edges[formatted_edge_key]
+        if self.__edge_key.format(v2, v1) in self.__edges:
+            formatted_edge_key = self.__edge_key.format(v2, v1)
+            edge = self.__edges[formatted_edge_key]
+            edge.disconnect_vertices()
+            del self.__edges[formatted_edge_key]
+
+    def contains_edge(self, v1, v2):
         """Determines whether or not this graph contains a given edge. An edge
         is considered in the graph if the graph contains some edge such that
         the vertices of that edge match the vertices of the given edge.
 
         Args:
-            edge(Edge): the edge to check in the graph. The edge is
-                bidirectional, thus it is acceptable for either side of the edge
-                to be checked by the graph.
+            v1(str): the name of one of the vertices in the edge
+            v2(str): the name of the other vertice in the edge
         Returns:
             boolean: Whether or not the edge is in the graph."""
-        return edge.from_vertice().name() + " - " + edge.to_vertice().name() \
-            in self.__edges \
-            or edge.to_vertice().name() + " - " + edge.from_vertice().name() \
-            in self.__edges
-
-    def edges(self):
-        """Returns the edges of this graph.
-
-        Returns:
-            list(Edge): the edges of this graph
-        """
-        return list(self.__edges.values())
+        return self.__edge_key.format(v1, v2) in self.__edges or \
+            self.__edge_key.format(v2, v1) in self.__edges
 
     def vertices(self):
-        """Returns the vertices of this graph.
+        """Returns the set of vertices contained in this graph.
 
         Returns:
-            list(Vertice): the vertices of this graph
+            set(Vertice): A set of copies of vertices in this graph
         """
-        return self.__vertices
+        return set(self.__vertices.values())
+
+    def edges(self):
+        """Returns the set of edges contained in this graph.
+
+        Returns:
+            set(Edge): A set of copies of edges in this graph
+        """
+        return set(self.__edges.values())
+

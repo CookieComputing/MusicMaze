@@ -1,143 +1,142 @@
 from unittest import TestCase
-
-from model.graph.Edge import Edge
 from model.graph.Graph import Graph
-from model.graph.Vertice import Vertice
 
 
 class TestGraph(TestCase):
     """This class represent unit test cases for the graph."""
 
-    def test_graph_contains_same_edge_different_from_vertice(self):
-        v1 = Vertice("one")
-        v2 = Vertice("two")
+    def find_vertice(self, name, vertices):
+        """Helper function to locate a vertice in the graph. The return type
+        of vertices is a set, so there is no order guarantee from the
+        returned copied set"""
+        for vertice in vertices:
+            if vertice.name() == name:
+                return vertice
+        self.fail("Could not find a vertice with given name")
 
-        edge1 = Edge(v1, v2)
-        edge2 = Edge(v2, v1)
-
+    def test_adding_vertice_basic_add(self):
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
 
-        self.assertFalse(g.contains_edge(edge1))
-        self.assertFalse(g.contains_edge(edge2))
+        self.assertFalse(g.contains_vertice("one"))
+        g.add_vertice("one")
+        self.assertTrue(g.contains_vertice("one"))
 
-        g.add_edge(edge1)
-        self.assertTrue(g.contains_edge(edge1))
-        self.assertTrue(g.contains_edge(edge2))
-
-    def test_overlapping_edge_unique_contains(self):
-        """Adding multiple edges to a single vertice should not
-        change the contains_edge() function return value"""
-
-        v1 = Vertice("one")
-        v2 = Vertice("two")
-        v3 = Vertice("three")
-        v4 = Vertice("four")
-
-        edge1 = Edge(v1, v2)
-        edge2 = Edge(v2, v3)
-        edge3 = Edge(v3, v4)
-
+    def test_adding_edge_forces_connection(self):
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
-        g.add_vertice(v3)
-        g.add_vertice(v4)
 
-        self.assertFalse(g.contains_edge(edge1))
-        self.assertFalse(g.contains_edge(edge2))
-        self.assertFalse(g.contains_edge(edge3))
+        g.add_vertice("one")
+        g.add_vertice("two")
 
-        g.add_edge(edge1)
-        self.assertTrue(g.contains_edge(edge1))
-        self.assertFalse(g.contains_edge(edge2))
-        self.assertFalse(g.contains_edge(edge3))
+        self.assertFalse(g.contains_edge("one", "two"))
+        g.add_edge("one", "two")
+        self.assertTrue(g.contains_edge("two", "one"))
+        self.assertTrue(g.contains_edge("one", "two"))
 
-        g.add_edge(edge2)
-        self.assertTrue(g.contains_edge(edge1))
-        self.assertTrue(g.contains_edge(edge2))
-        self.assertFalse(g.contains_edge(edge3))
+        vertices = g.vertices()
+        vertice_one = self.find_vertice("one", vertices)
+        vertice_two = self.find_vertice("two", vertices)
 
-        g.add_edge(edge3)
-        self.assertTrue(g.contains_edge(edge1))
-        self.assertTrue(g.contains_edge(edge2))
-        self.assertTrue(g.contains_edge(edge3))
+        self.assertTrue(vertice_one.is_neighbor(vertice_two))
+        self.assertTrue(vertice_two.is_neighbor(vertice_one))
 
-    def test_random_edge_not_contained(self):
-        """A random edge that is tangentially related to another edge
-        should not affect the current contains function"""
-
-        v1 = Vertice("one")
-        v2 = Vertice("three")
-
-        random_vertice1 = Vertice("nope")
-        random_vertice2 = Vertice("not here")
-        random_vertice3 = Vertice("not here as well")
-
-        edge1 = Edge(v1, v2)
-
+    def test_removing_edges_severs_connections(self):
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
-        g.add_vertice(random_vertice1)
-        g.add_vertice(random_vertice2)
-        g.add_vertice(random_vertice3)
-        g.add_edge(Edge(v1, random_vertice1))
-        g.add_edge(Edge(v1, random_vertice2))
-        g.add_edge(Edge(v2, random_vertice3))
 
-        self.assertFalse(g.contains_edge(edge1))
+        g.add_vertice("one")
+        g.add_vertice("two")
 
-    def test_error_when_readding_existing_edge(self):
-        """There should be an expected error if an edge was already added"""
-        v1 = Vertice("one")
-        v2 = Vertice("two")
+        vertices = g.vertices()
+        vertice_one = self.find_vertice("one", vertices)
+        vertice_two = self.find_vertice("two", vertices)
 
-        edge = Edge(v1, v2)
+        g.add_edge("one", "two")
+        self.assertTrue(g.contains_edge("one", "two"))
+        self.assertTrue(vertice_one.is_neighbor(vertice_two))
+        self.assertTrue(vertice_two.is_neighbor(vertice_one))
+
+        g.remove_edge("two", "one")
+        self.assertFalse(g.contains_edge("one", "two"))
+        self.assertFalse(vertice_one.is_neighbor(vertice_two))
+        self.assertFalse(vertice_two.is_neighbor(vertice_one))
+
+    def test_removing_edges_with_no_added_edge(self):
+        """Expected behavior is to interact with the graph by using
+        edges. By mutating the vertices and add neighbors manually,
+        the edges will not be correctly connected"""
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
-        g.add_edge(edge)
+
+        g.add_vertice("one")
+        g.add_vertice("two")
+
+        vertices = g.vertices()
+        vertice_one = self.find_vertice("one", vertices)
+        vertice_two = self.find_vertice("two", vertices)
+
+        vertice_one.add_neighbor(vertice_two)
+        self.assertTrue(vertice_one.is_neighbor(vertice_two))
+        self.assertFalse(vertice_two.is_neighbor(vertice_one))
+
+        g.remove_edge("one", "two")
+        # There was initially no edge and thus nothing was changed
+        self.assertTrue(vertice_one.is_neighbor(vertice_two))
+        self.assertFalse(vertice_two.is_neighbor(vertice_one))
+
+    def test_remove_edges_with_no_existing_vertices(self):
+        g = Graph()
+        g.remove_edge("dfsafas", "fdsfas")
+
+    def test_adding_non_existent_edge(self):
+        g = Graph()
+
+        g.add_vertice("one")
 
         try:
-            g.add_edge(edge)
-            self.fail("Should not be able to add an existing edge")
+            g.add_edge("one", "nil")
+            self.fail("Should not be able to add edge if both vertices exist")
         except ValueError as e:
-            self.assertEqual("Given an edge that already exists", str(e))
+            self.assertEqual("Vertice contained in edge not in graph", str(e))
 
-    def test_error_when_adding_other_edges(self):
-        """There should be an expected error if an edge was already added"""
-        v1 = Vertice("one")
-        v2 = Vertice("two")
-
-        edge = Edge(v1, v2)
+    def test_add_self_reference_edge(self):
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
-        g.add_edge(edge)
+        g.add_vertice("single")
 
         try:
-            g.add_edge(Edge(v2, v1))
-            self.fail("Should not be able to add an existing edge")
+            g.add_edge("single", "single")
         except ValueError as e:
-            self.assertEqual("Given an edge that already exists", str(e))
+            self.assertEqual("Vertice cannot become it's own neighbor", str(e))
 
-    def test_error_when_adding_same_vertices_reversed(self):
-        """Since we have defined vertices to have unique names, any vertices
-        containing such names should be invalid vertices"""
-        v1 = Vertice("one")
-        v2 = Vertice("two")
+        self.assertFalse(g.contains_edge("single", "single"))
 
-        edge = Edge(v1, v2)
+    def test_other_non_existent_edge(self):
         g = Graph()
-        g.add_vertice(v1)
-        g.add_vertice(v2)
-        g.add_edge(edge)
+        g.add_vertice("other")
 
         try:
-            g.add_edge(Edge(v2, v1))
-            self.fail("Should not be able to add an existing edge")
+            g.add_edge("nil", "other")
+            self.fail("Should not be able to add edge if both vertices exist")
         except ValueError as e:
-            self.assertEqual("Given an edge that already exists", str(e))
+            self.assertEqual("Vertice contained in edge not in graph", str(e))
+
+    def test_both_non_existent_edge(self):
+        g = Graph()
+        g.add_vertice("other")
+
+        try:
+            g.add_edge("nil", "nope")
+            self.fail("Should not be able to add edge if both vertices exist")
+        except ValueError as e:
+            self.assertEqual("Vertice contained in edge not in graph", str(e))
+
+    def test_adding_existent_edge(self):
+        g = Graph()
+
+        g.add_vertice("one")
+
+        try:
+            g.add_vertice("one")
+            self.fail("Should not be able to add another vertice")
+        except ValueError as e:
+            self.assertEqual("Vertice already in the graph", str(e))
+
+        self.assertTrue(g.contains_vertice("one"))
 

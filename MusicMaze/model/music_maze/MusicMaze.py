@@ -17,10 +17,32 @@ class MusicMaze:
     is highly variable, but the starting location will definitely bring a player
     to the right path if followed correctly."""
 
-    def __init__(self):
-        pass
+    def __init__(self, length, width, height):
+        """Initializes the maze with the following dimensions, as well as the
+        bare minimum length of the maze. The provided widths and heights are
+        expected to satisfy the equation (width + height) - 2 >= length to
+        satisfy the requirements of the length
 
-    def __construct_maze(self, length=8, extra_width=0, extra_height=0):
+        Args:
+            length(int): the length of the solution for the maze
+            width(int): the hinted width of the maze
+            height(int): the hinted height of the maze
+        Raises:
+            ValueError: If the length, width, or height <= 0"""
+        if length <= 0 or width <= 0 or height <= 0:
+            raise ValueError("Given invalid maze dimension")
+
+        if not width + height - 1 >= length:
+            raise ValueError("Given width and height cannot"
+                             " guarantee path length")
+
+        self.__solution_path = None
+        self.__player = None
+        self.__start_pos = None
+        self.__end_pos = None
+        self.__construct_maze(length, width, height)
+
+    def __construct_maze(self, length, width, height):
         """Given a length on which to construct the length of the solution to
         the maze, constructs a maze with hints towards the size of the maze.
         By the constraints of our maze, the bare minimum dimensions of this
@@ -29,13 +51,11 @@ class MusicMaze:
 
         Args:
             length(int): the length of the path.
-            extra_width(int): any additional width requested from the maze
-            extra_height(int): any additional height requested from the maze
+            width(int): the width of the maze.
+            height(int): the height of the maze.
         Raises:
-            ValueError: if length, extra_width, or extra_height is not positive
+            ValueError: if no solution to the maze was found somehow
             """
-        if length <= 0 or extra_width <= 0 or extra_height <= 0:
-            raise ValueError("Given negative dimension parameter")
         # build the maze of vertices
         # connect all of the vertices together
         # apply kruskal's to find something from the graph
@@ -89,4 +109,13 @@ class MusicMaze:
 
         Returns:
             bool: if the player has reached the end cell"""
+        pass
+
+    def __str__(self):
+        """Represents a string representation of the maze. In this context,
+        the maze looks like a series of Os representing the walls, spaces
+        representing the lanes in between, and X denoting the player location.
+
+        Returns:
+            str: A string representation of the maze."""
         pass

@@ -6,7 +6,7 @@ class Graph:
     """This class represents an implementation of a graph. The graph is a
     set of vertices and edges, and is interpreted using an adjacency list
     for the ease of connecting vertices with their neighbors. The graph itself
-    is not a maze, but an rather interpretation of a connected tree of nodes.
+    is not a maze, but rather an interpretation of a connected tree of nodes.
     The class is an undirected simple graph, and as such will have unique
     edges that are bidirectional.
 

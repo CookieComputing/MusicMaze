@@ -125,40 +125,20 @@ class Graph:
         """
         return set(self.__edges.values())
 
-    def nodes_at_level(self, root, depth):
-        """Returns the name of all vertices that are at the specified level.
-        If no such nodes exist, return an empty list.
+    def neighbors(self, vertice):
+        """Returns a list of the names of the neighbors of the given vertice
+         in the graph.
 
         Args:
-            root(str): the name of the root node to start from
-            depth(int): the depth away from the root node
+            vertice(str): the name of the vertice
         Returns:
-            list(str): a list of the names of all vertices reachable at depth
+            list(str): a list of the name of the neighbors
         Raises:
-            ValueError: if the depth is negative
-            ValueError: if root does not exist in the graph"""
-        if not self.contains_vertice(root):
-            raise ValueError("Root not found in graph")
+            ValueError: If the vertice does not exist in the graph
+            """
+        if not self.contains_vertice(vertice):
+            raise ValueError("Vertice not in graph")
 
-        if depth < 0:
-            raise ValueError("Given invalid depth")
-
-        result = []
-
-        root_vertice = self.__vertices[root]
-        work_list = [(root_vertice, 0)]
-        discovered = set()
-        while work_list:
-            current_vertice, current_level = work_list.pop(0)
-
-            if current_vertice.name() in discovered:
-                continue
-
-            discovered.add(current_vertice.name())
-            if current_level < depth:
-                for neighbor in current_vertice.neighbors():
-                    work_list.append((neighbor, current_level + 1))
-            elif current_level == depth:
-                result.append(current_vertice.name())
-                # neighbors at this point are discarded if level >= depth
-        return result
+        node = self.__vertices[vertice]
+        return [neighbor_vertice.name()
+                for neighbor_vertice in node.neighbors()]

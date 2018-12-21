@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from model.graph.Edge import Edge
-from model.graph.PriorityQueue import PriorityQueue
+from model.data_structures.PriorityQueue import PriorityQueue
 from model.graph.Vertice import Vertice
 
 

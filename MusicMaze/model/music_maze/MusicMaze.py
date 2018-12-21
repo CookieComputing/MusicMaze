@@ -1,3 +1,9 @@
+import random
+
+from model.graph.Graph import Graph
+from model.graph.kruskal import kruskal
+
+
 class MusicMaze:
     """This class represents an instance of a music maze game. The class itself
     is responsible for constructing a graph such that the graph now depicts
@@ -17,16 +23,18 @@ class MusicMaze:
     is highly variable, but the starting location will definitely bring a player
     to the right path if followed correctly."""
 
-    def __init__(self, length, width, height):
+    def __init__(self, length, width, height, seed=0):
         """Initializes the maze with the following dimensions, as well as the
         bare minimum length of the maze. The provided widths and heights are
-        expected to satisfy the equation (width + height) - 2 >= length to
+        expected to satisfy the equation (width + height) - 1 >= length to
         satisfy the requirements of the length
 
         Args:
             length(int): the length of the solution for the maze
             width(int): the hinted width of the maze
             height(int): the hinted height of the maze
+            seed(int): a seed to generate a new maze. Should be left untouched
+                for ordinary purposes.
         Raises:
             ValueError: If the length, width, or height <= 0"""
         if length <= 0 or width <= 0 or height <= 0:
@@ -36,13 +44,17 @@ class MusicMaze:
             raise ValueError("Given width and height cannot"
                              " guarantee path length")
 
-        self.__solution_path = None
-        self.__player = None
-        self.__start_pos = None
-        self.__end_pos = None
-        self.__construct_maze(length, width, height)
+        if not seed:
+            random.seed(seed)
+        self.__graph = self.__construct_maze(width, height)
 
-    def __construct_maze(self, length, width, height):
+        self.__solution_path = []
+        self.__player_pos = None
+        self.__starting_pos = None
+        # the maze position is interpreted as (row, col)
+        self.__end_pos = (width - 1, height - 1)
+
+    def __construct_maze(self, width, height):
         """Given a length on which to construct the length of the solution to
         the maze, constructs a maze with hints towards the size of the maze.
         By the constraints of our maze, the bare minimum dimensions of this
@@ -50,18 +62,62 @@ class MusicMaze:
         path such that a path of the appropriate length can be found.
 
         Args:
-            length(int): the length of the path.
             width(int): the width of the maze.
             height(int): the height of the maze.
+        Returns:
+            Graph: a resulting graph
         Raises:
             ValueError: if no solution to the maze was found somehow
             """
-        # build the maze of vertices
-        # connect all of the vertices together
-        # apply kruskal's to find something from the graph
-        # sever any edges not in kruskals
-        # BFS to find an appropriate starting location (since top-left is just a
-        # lower bound guarentee)
+        cell_format = "({0}, {1})"
+        weight_lower_bound = 0
+        weight_upper_bound = 10000
+
+        graph = Graph()
+
+        def add_vertices():
+            for row in range(height):
+                for col in range(width):
+                    graph.add_vertice(cell_format.format(row, col))
+
+        def add_edges():
+            # the edges are added in sequence of each row connected first,
+            # then all rows are joined.
+
+            # e. g. o - o - o
+
+            # then o o o
+            #      | | |
+            #      o o o
+            for row in range(height):
+                for col in range(width-1):
+                    graph.add_edge(cell_format.format(row, col),
+                                   cell_format.format(row, col+1),
+                                   random.randint(weight_lower_bound,
+                                                  weight_upper_bound))
+
+            for row in range(height - 1):
+                for col in range(width):
+                    graph.add_edge(cell_format.format(row, col),
+                                   cell_format.format(row+1, col),
+                                   random.randint(weight_lower_bound,
+                                                  weight_upper_bound))
+
+        def remove_non_mst_edges():
+            kruskal_edges = set(kruskal(graph))
+            for edge in graph.edges():
+                if edge not in kruskal_edges:
+                    graph.remove_edge(edge.from_vertice().name(),
+                                      edge.to_vertice().name())
+
+        def set_starting_position():
+            pass
+
+        add_vertices()
+        add_edges()
+        remove_non_mst_edges()
+        set_starting_position()
+        return graph
 
     def distance_from_path(self, row, col):
         """Given a row and column of a cell, determines the distance that cell
@@ -81,7 +137,7 @@ class MusicMaze:
         Returns:
             list(str): A list of edges in string format that represent the
                 correct path from start to finish"""
-        pass
+        return None
 
     def move_player(self, row, col):
         """Moves the player to the expected row and column if possible.
@@ -101,7 +157,7 @@ class MusicMaze:
 
         Returns:
             tuple(int, int): the (row, col) of the player's current location"""
-        pass
+        return self.__player_pos
 
     def game_over(self):
         """Determines if the game is over. The game is considered "over" when
@@ -109,7 +165,7 @@ class MusicMaze:
 
         Returns:
             bool: if the player has reached the end cell"""
-        pass
+        return self.__player_pos == self.__end_pos
 
     def __str__(self):
         """Represents a string representation of the maze. In this context,

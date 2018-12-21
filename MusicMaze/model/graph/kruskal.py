@@ -2,7 +2,7 @@
 is an algorithm used to find the minimum spanning tree of a given graph
 and it's provided edges. The minimum spanning tree returned from the graph
 will then be considered as the "solution" path that a user can follow."""
-from model.graph.PriorityQueue import PriorityQueue
+from model.data_structures.PriorityQueue import PriorityQueue
 
 
 def kruskal(graph):

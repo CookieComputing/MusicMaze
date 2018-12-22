@@ -1,8 +1,11 @@
+import itertools
 import random
 
 from model.graph.Graph import Graph
 from model.graph.GraphUtilities import nodes_at_level
 from model.graph.kruskal import kruskal
+
+cell_format = "({0}, {1})"
 
 
 class MusicMaze:
@@ -45,12 +48,15 @@ class MusicMaze:
             raise ValueError("Given width and height cannot"
                              " guarantee path length")
 
-        if not seed:
+        if seed:
             random.seed(seed)
+
+        self.__height = height
+        self.__width = width
 
         # initialized in construct_maze()
         self.__starting_pos = None
-        self.__end_pos = (width - 1, height - 1)
+        self.__end_pos = (height - 1, width - 1)
         self.__graph = self.__construct_maze(width, height, length)
         self.__player_pos = self.__starting_pos
 
@@ -71,7 +77,6 @@ class MusicMaze:
         Returns:
             Graph: a resulting graph
             """
-        cell_format = "({0}, {1})"
         weight_lower_bound = 0
         weight_upper_bound = 10000
 
@@ -185,4 +190,39 @@ class MusicMaze:
 
         Returns:
             str: A string representation of the maze."""
-        pass
+        row_connections = []
+        column_connections = []
+
+        for row in range(self.__height):
+            row_entry = []
+            for col in range(self.__width):
+                if str(self.__player_pos) == cell_format.format(row, col):
+                    row_entry.append("X")
+                else:
+                    row_entry.append("O")
+
+                # works for the edge case of the last node b/c
+                # edges not in the graph return false
+                if self.__graph.contains_edge(cell_format.format(row, col),
+                                              cell_format.format(row, col+1)):
+                    row_entry.append(" - ")
+                elif col != self.__width - 1:
+                    row_entry.append("   ")
+            row_connections.append(''.join(row_entry))
+
+        for row in range(self.__height - 1):
+            col_entry = []
+            for col in range(self.__width):
+                if self.__graph.contains_edge(cell_format.format(row, col),
+                                              cell_format.format(row + 1, col)):
+                    col_entry.append("|")
+                else:
+                    col_entry.append(" ")
+            column_connections.append("   ".join(col_entry))
+
+        return '\n'.join([entry for entry in
+                          itertools.chain(
+                              *itertools.zip_longest(
+                                  row_connections,
+                                  column_connections))
+                          if entry is not None])

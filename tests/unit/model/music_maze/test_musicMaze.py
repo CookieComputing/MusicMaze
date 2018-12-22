@@ -9,11 +9,70 @@ class TestMusicMaze(TestCase):
     verify if a move has been appropriately made."""
 
     def test_two_by_two_maze_state(self):
-        m = MusicMaze(3, 2, 2)
+        """Kept at a bare minimum to avoid having to detect different starting
+        positions"""
+        m = MusicMaze(3, 2, 2, 1)
 
-        m_str = "o - o\n" \
-                "    |\n" \
-                "o - o"
+        m_str = "X - O\n" \
+                "|   |\n" \
+                "O   O"
+        self.assertEqual(m_str, str(m))
+
+    def test_three_by_three_maze_state(self):
+        """Kept at a bare minimum to avoid having to detect different starting
+        positions"""
+        m = MusicMaze(5, 3, 3, 1)
+
+        m_str = "X - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "    |   |\n" \
+                "O - O   O"
+        self.assertEqual(m_str, str(m))
+
+    def test_four_by_four_maze_state(self):
+        """Kept at a bare minimum to avoid having to detect different starting
+        positions"""
+
+        m = MusicMaze(7, 4, 4, 1)
+
+        m_str = "X - O   O - O\n" \
+                "|       |    \n" \
+                "O - O - O   O\n" \
+                "|       |   |\n" \
+                "O   O   O - O\n" \
+                "    |   |   |\n" \
+                "O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+    def test_three_by_five_maze_state(self):
+        """Kept at a bare minimum to avoid having to detect different starting
+        positions"""
+
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+    def test_five_by_three_maze_state(self):
+        """Kept at a bare minimum to avoid having to detect different starting
+        positions"""
+
+        m = MusicMaze(7, 3, 5, 1)
+
+        m_str = "X - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "|        \n" \
+                "O - O   O\n" \
+                "|   |   |\n" \
+                "O   O   O\n" \
+                "|       |\n" \
+                "O - O - O\n"
 
     def test_negative_length_constructor(self):
         try:

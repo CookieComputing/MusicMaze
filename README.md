@@ -10,9 +10,6 @@ idea: There is only one path to the correct destination, and by following along 
 "correct" path, you will hear notes that correspond to a specific melody desired, and it
 should be played in tune! Otherwise, you're probably on the wrong path.
 
-### What is the expected date of project completion?
-Well, I have to get it done *at some point*, but likely before my friend's birthday.
-
 ### Is there anything I should know?
 Yes! I'm actually using this project for various purposes, one of which is to learn to
 use PyCharm's various features and to finally transition from a purely text-editor based

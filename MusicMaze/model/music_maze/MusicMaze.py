@@ -127,7 +127,12 @@ class MusicMaze:
                                                        length-1)
 
             # always works given that the width/height invariant is satisfied
-            self.__starting_pos = potential_starting_points[0]
+            initial_starting_point_str = potential_starting_points[0]
+
+            # Since the string is of the form (x, y)
+            self.__starting_pos = tuple([int(x) for x in
+                                         initial_starting_point_str[1:-1]
+                                        .split(',')])
 
         add_vertices()
         add_edges()
@@ -165,7 +170,13 @@ class MusicMaze:
             ValueError: if the player cannot move to that location.
             ValueError: if the player tries to move to the same location they
                 are located at"""
-        pass
+        if not self.__graph.contains_edge(
+                cell_format.format(
+                    self.__player_pos[0],
+                    self.__player_pos[1]),
+                cell_format.format(row, col)):
+            raise ValueError("Cannot move to given location")
+        self.__player_pos = (row, col)
 
     def get_player_position(self):
         """Returns a tuple representing the (row, col) of the player's current

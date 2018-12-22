@@ -162,7 +162,7 @@ class TestGraphUtilities(TestCase):
 
         # o - o - o
         #     |
-        # o   o   o`
+        # o   o   o
         # |   |   |
         # o - o - o
 

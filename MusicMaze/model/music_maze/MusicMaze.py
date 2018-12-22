@@ -148,8 +148,38 @@ class MusicMaze:
             row(int): the row of the cell
             col(int): the column of the cell
         Returns:
-            int: the distance that cell is away from the solution path"""
-        pass
+            int: the distance that cell is away from the solution path, -1 if
+                somehow not found
+        Raises:
+            IndexError: if the (row, col) pos is not in the graph"""
+
+        original_cell = cell_format.format(row, col)
+        if not self.__graph.contains_vertice(original_cell):
+            raise ValueError("Given invalid position")
+
+        solution_mapping = set(self.solution_path())
+        visited = set()
+
+        work_list = [cell_format.format(row, col)]
+        while work_list:
+            current_vertice = work_list.pop(0)
+
+            visited.add(current_vertice)
+            if current_vertice in solution_mapping:
+                distance_from_path = len(shortest_path(self.__graph,
+                                         original_cell,
+                                         current_vertice))
+                if distance_from_path:
+                    # removes the from node to prevent over counting
+                    return distance_from_path - 1
+                else:
+                    return 0
+
+            for neighbor in self.__graph.neighbors(current_vertice):
+                if neighbor not in visited:
+                    work_list.append(neighbor)
+
+        return -1
 
     def solution_path(self):
         """Returns the path that represents the "correct" steps needed to move

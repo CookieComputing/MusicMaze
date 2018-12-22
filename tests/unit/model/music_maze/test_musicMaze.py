@@ -429,6 +429,130 @@ class TestMusicMaze(TestCase):
                           "(4, 0)", "(4, 1)", "(4, 2)"],
                          m.solution_path())
 
+    def test_get_player_pos(self):
+        m = MusicMaze(7, 3, 5, 1)
+
+        m_str = "O - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "|        \n" \
+                "O - O   O\n" \
+                "|   |   |\n" \
+                "O   X   O\n" \
+                "|       |\n" \
+                "O - O - O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual("(3, 1)", str(m.get_player_position()))
+        m.move_player(2, 1)
+        self.assertEqual("(2, 1)", str(m.get_player_position()))
+        m.move_player(2, 0)
+        self.assertEqual("(2, 0)", str(m.get_player_position()))
+        m.move_player(2, 1)
+        self.assertEqual("(2, 1)", str(m.get_player_position()))
+        m.move_player(3, 1)
+        self.assertEqual("(3, 1)", str(m.get_player_position()))
+
+    def test_random_distance_positions_four_by_four(self):
+        m = MusicMaze(7, 4, 4, 1)
+
+        m_str = "X - O   O - O\n" \
+                "|       |    \n" \
+                "O - O - O   O\n" \
+                "|       |   |\n" \
+                "O   O   O - O\n" \
+                "    |   |   |\n" \
+                "O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        # solution path should all be zero
+        self.assertEqual(0, m.distance_from_path(0, 0))
+        self.assertEqual(0, m.distance_from_path(1, 0))
+        self.assertEqual(0, m.distance_from_path(1, 1))
+        self.assertEqual(0, m.distance_from_path(1, 2))
+        self.assertEqual(0, m.distance_from_path(2, 2))
+        self.assertEqual(0, m.distance_from_path(2, 3))
+        self.assertEqual(0, m.distance_from_path(3, 3))
+
+        self.assertEqual(1, m.distance_from_path(0, 1))
+        self.assertEqual(1, m.distance_from_path(2, 0))
+        self.assertEqual(1, m.distance_from_path(0, 2))
+        self.assertEqual(1, m.distance_from_path(3, 2))
+        self.assertEqual(1, m.distance_from_path(1, 3))
+
+        self.assertEqual(2, m.distance_from_path(0, 3))
+        self.assertEqual(2, m.distance_from_path(3, 1))
+
+        self.assertEqual(3, m.distance_from_path(3, 0))
+        self.assertEqual(3, m.distance_from_path(2, 1))
+
+    def test_random_distance_positions_three_by_five(self):
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        # solution path should all be zero
+        self.assertEqual(0, m.distance_from_path(1, 3))
+        self.assertEqual(0, m.distance_from_path(1, 2))
+        self.assertEqual(0, m.distance_from_path(0, 2))
+        self.assertEqual(0, m.distance_from_path(0, 3))
+        self.assertEqual(0, m.distance_from_path(0, 4))
+        self.assertEqual(0, m.distance_from_path(1, 4))
+        self.assertEqual(0, m.distance_from_path(2, 4))
+
+        self.assertEqual(1, m.distance_from_path(2, 2))
+
+        self.assertEqual(2, m.distance_from_path(2, 3))
+        self.assertEqual(2, m.distance_from_path(2, 1))
+
+        self.assertEqual(3, m.distance_from_path(2, 0))
+        self.assertEqual(3, m.distance_from_path(1, 1))
+
+        self.assertEqual(4, m.distance_from_path(1, 0))
+
+        self.assertEqual(5, m.distance_from_path(0, 0))
+
+        self.assertEqual(6, m.distance_from_path(0, 1))
+
+    def test_random_distance_positions_five_by_three(self):
+        m = MusicMaze(7, 3, 5, 1)
+
+        m_str = "O - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "|        \n" \
+                "O - O   O\n" \
+                "|   |   |\n" \
+                "O   X   O\n" \
+                "|       |\n" \
+                "O - O - O"
+        self.assertEqual(m_str, str(m))
+
+        # solution path should all be zero
+        self.assertEqual(0, m.distance_from_path(3, 1))
+        self.assertEqual(0, m.distance_from_path(2, 1))
+        self.assertEqual(0, m.distance_from_path(2, 0))
+        self.assertEqual(0, m.distance_from_path(3, 0))
+        self.assertEqual(0, m.distance_from_path(4, 0))
+        self.assertEqual(0, m.distance_from_path(4, 1))
+        self.assertEqual(0, m.distance_from_path(4, 2))
+
+        self.assertEqual(1, m.distance_from_path(1, 0))
+        self.assertEqual(1, m.distance_from_path(3, 2))
+
+        self.assertEqual(2, m.distance_from_path(0, 0))
+        self.assertEqual(2, m.distance_from_path(1, 1))
+
+        self.assertEqual(3, m.distance_from_path(0, 1))
+        self.assertEqual(3, m.distance_from_path(1, 2))
+
+        self.assertEqual(4, m.distance_from_path(0, 2))
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)
@@ -591,3 +715,39 @@ class TestMusicMaze(TestCase):
             self.fail("Cannot teleport to the end")
         except ValueError as e:
             self.assertEqual("Cannot move to given location", str(e))
+
+    def test_negative_row_distance_check(self):
+        m = MusicMaze(3, 2, 2)
+
+        try:
+            m.distance_from_path(-1, 0)
+            self.fail("Should not be able to check negative distances")
+        except ValueError as e:
+            self.assertEqual("Given invalid position", str(e))
+
+    def test_negative_col_distance_check(self):
+        m = MusicMaze(3, 2, 2)
+
+        try:
+            m.distance_from_path(0, -1)
+            self.fail("Should not be able to check negative distances")
+        except ValueError as e:
+            self.assertEqual("Given invalid position", str(e))
+
+    def test_out_of_bounds_row_distance_check(self):
+        m = MusicMaze(7, 3, 5)
+
+        try:
+            m.distance_from_path(6,0)
+            self.fail("Should not be able to check out of bounds distances")
+        except ValueError as e:
+            self.assertEqual("Given invalid position", str(e))
+
+    def test_out_of_bounds_col_distance_check(self):
+        m = MusicMaze(7, 5, 3)
+
+        try:
+            m.distance_from_path(0, 6)
+            self.fail("Should not be able to check out of bounds distances")
+        except ValueError as e:
+            self.assertEqual("Given invalid position", str(e))

@@ -1,6 +1,7 @@
 import random
 
 from model.graph.Graph import Graph
+from model.graph.GraphUtilities import nodes_at_level
 from model.graph.kruskal import kruskal
 
 
@@ -46,15 +47,17 @@ class MusicMaze:
 
         if not seed:
             random.seed(seed)
-        self.__graph = self.__construct_maze(width, height)
+
+        # initialized in construct_maze()
+        self.__starting_pos = None
+        self.__end_pos = (width - 1, height - 1)
+        self.__graph = self.__construct_maze(width, height, length)
+        self.__player_pos = self.__starting_pos
 
         self.__solution_path = []
-        self.__player_pos = None
-        self.__starting_pos = None
         # the maze position is interpreted as (row, col)
-        self.__end_pos = (width - 1, height - 1)
 
-    def __construct_maze(self, width, height):
+    def __construct_maze(self, width, height, length):
         """Given a length on which to construct the length of the solution to
         the maze, constructs a maze with hints towards the size of the maze.
         By the constraints of our maze, the bare minimum dimensions of this
@@ -64,10 +67,9 @@ class MusicMaze:
         Args:
             width(int): the width of the maze.
             height(int): the height of the maze.
+            length(int): the length of the maze.
         Returns:
             Graph: a resulting graph
-        Raises:
-            ValueError: if no solution to the maze was found somehow
             """
         cell_format = "({0}, {1})"
         weight_lower_bound = 0
@@ -111,7 +113,16 @@ class MusicMaze:
                                       edge.to_vertice().name())
 
         def set_starting_position():
-            pass
+            # arbitrarily picks the first starting point
+            # length - 1 because 0 denotes the starting position
+            potential_starting_points = nodes_at_level(graph,
+                                                       cell_format.format(
+                                                           self.__end_pos[0],
+                                                           self.__end_pos[1]),
+                                                       length-1)
+
+            # always works given that the width/height invariant is satisfied
+            self.__starting_pos = potential_starting_points[0]
 
         add_vertices()
         add_edges()

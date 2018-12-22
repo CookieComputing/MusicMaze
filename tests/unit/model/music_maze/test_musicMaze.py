@@ -8,6 +8,13 @@ class TestMusicMaze(TestCase):
     take advantage of the string representation of the maze to visually
     verify if a move has been appropriately made."""
 
+    def test_two_by_two_maze_state(self):
+        m = MusicMaze(3, 2, 2)
+
+        m_str = "o - o\n" \
+                "    |\n" \
+                "o - o"
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)

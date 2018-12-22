@@ -64,15 +64,16 @@ class TestMusicMaze(TestCase):
 
         m = MusicMaze(7, 3, 5, 1)
 
-        m_str = "X - O   O\n" \
+        m_str = "O - O   O\n" \
                 "|       |\n" \
                 "O - O - O\n" \
                 "|        \n" \
                 "O - O   O\n" \
                 "|   |   |\n" \
-                "O   O   O\n" \
+                "O   X   O\n" \
                 "|       |\n" \
-                "O - O - O\n"
+                "O - O - O"
+        self.assertEqual(m_str, str(m))
 
     def test_negative_length_constructor(self):
         try:
@@ -83,7 +84,7 @@ class TestMusicMaze(TestCase):
 
     def test_zero_length_constructor(self):
         try:
-            MusicMaze(-1, 2, 3)
+            MusicMaze(0, 2, 3)
             self.fail("Should not be able to given zero length")
         except ValueError as e:
             self.assertEqual("Given invalid maze dimension", str(e))

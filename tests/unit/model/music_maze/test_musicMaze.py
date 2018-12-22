@@ -358,6 +358,77 @@ class TestMusicMaze(TestCase):
         m.move_player(1, 4)
         self.assertFalse(m.game_over())
 
+    def test_solution_path_two_by_two(self):
+        m = MusicMaze(3, 2, 2, 1)
+
+        m_str = "X - O\n" \
+                "|   |\n" \
+                "O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual(["(0, 0)", "(0, 1)", "(1, 1)"], m.solution_path())
+
+    def test_solution_path_three_by_three(self):
+        m = MusicMaze(5, 3, 3, 1)
+
+        m_str = "X - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "    |   |\n" \
+                "O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual(["(0, 0)", "(1, 0)", "(1, 1)", "(1, 2)", "(2, 2)"],
+                         m.solution_path())
+
+    def test_solution_path_four_by_four(self):
+        m = MusicMaze(7, 4, 4, 1)
+
+        m_str = "X - O   O - O\n" \
+                "|       |    \n" \
+                "O - O - O   O\n" \
+                "|       |   |\n" \
+                "O   O   O - O\n" \
+                "    |   |   |\n" \
+                "O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual(["(0, 0)", "(1, 0)", "(1, 1)", "(1, 2)",
+                          "(2, 2)", "(2, 3)", "(3, 3)"],
+                         m.solution_path())
+
+    def test_solution_path_three_by_five(self):
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual(["(1, 3)", "(1, 2)", "(0, 2)",
+                          "(0, 3)", "(0, 4)", "(1, 4)", "(2, 4)"],
+                         m.solution_path())
+
+    def test_solution_path_five_by_three(self):
+        m = MusicMaze(7, 3, 5, 1)
+
+        m_str = "O - O   O\n" \
+                "|       |\n" \
+                "O - O - O\n" \
+                "|        \n" \
+                "O - O   O\n" \
+                "|   |   |\n" \
+                "O   X   O\n" \
+                "|       |\n" \
+                "O - O - O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertEqual(["(3, 1)", "(2, 1)", "(2, 0)", "(3, 0)",
+                          "(4, 0)", "(4, 1)", "(4, 2)"],
+                         m.solution_path())
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)

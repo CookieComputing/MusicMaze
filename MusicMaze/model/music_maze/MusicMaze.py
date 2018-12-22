@@ -2,7 +2,7 @@ import itertools
 import random
 
 from model.graph.Graph import Graph
-from model.graph.GraphUtilities import nodes_at_level
+from model.graph.GraphUtilities import nodes_at_level, shortest_path
 from model.graph.kruskal import kruskal
 
 cell_format = "({0}, {1})"
@@ -158,7 +158,9 @@ class MusicMaze:
         Returns:
             list(str): A list of edges in string format that represent the
                 correct path from start to finish"""
-        return None
+        return shortest_path(self.__graph,
+                             str(self.__starting_pos),
+                             str(self.__end_pos))
 
     def move_player(self, row, col):
         """Moves the player to the expected row and column if possible.

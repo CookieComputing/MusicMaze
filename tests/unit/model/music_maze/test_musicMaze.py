@@ -331,6 +331,33 @@ class TestMusicMaze(TestCase):
                 "O - O - O"
         self.assertEqual(m_str, str(m))
 
+    def test_game_over(self):
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertFalse(m.game_over())
+        m.move_player(1, 2)
+        self.assertFalse(m.game_over())
+        m.move_player(0, 2)
+        self.assertFalse(m.game_over())
+        m.move_player(0, 3)
+        self.assertFalse(m.game_over())
+        m.move_player(0, 4)
+        self.assertFalse(m.game_over())
+        m.move_player(1, 4)
+        self.assertFalse(m.game_over())
+        m.move_player(2, 4)
+        self.assertTrue(m.game_over())
+
+        m.move_player(1, 4)
+        self.assertFalse(m.game_over())
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)

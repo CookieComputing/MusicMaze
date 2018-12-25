@@ -1,6 +1,7 @@
 """This file represents various useful operations that can be applied on a
 graph and is separated from the graph object itself in the interest of
 separation of concerns."""
+from model.data_structures.Queue import Queue
 
 
 def nodes_at_level(graph, root, depth):
@@ -24,10 +25,11 @@ def nodes_at_level(graph, root, depth):
 
     result = []
 
-    work_list = [(root, 0)]
+    work_list = Queue()
+    work_list.enqueue((root, 0))
     discovered = set()
     while work_list:
-        current_vertice, current_level = work_list.pop(0)
+        current_vertice, current_level = work_list.dequeue()
 
         if current_vertice in discovered:
             continue
@@ -35,7 +37,7 @@ def nodes_at_level(graph, root, depth):
         discovered.add(current_vertice)
         if current_level < depth:
             for neighbor in graph.neighbors(current_vertice):
-                work_list.append((neighbor, current_level + 1))
+                work_list.enqueue((neighbor, current_level + 1))
         elif current_level == depth:
             result.append(current_vertice)
             # neighbors at this point are discarded if level >= depth
@@ -62,11 +64,12 @@ def shortest_path(graph, from_vertice, to_vertice):
     parent = {}
 
     def visit_nodes():
-        work_list = [from_vertice]
+        work_list = Queue()
+        work_list.enqueue(from_vertice)
         visited = set()
 
         while work_list:
-            current_vertice = work_list.pop(0)
+            current_vertice = work_list.dequeue()
 
             if current_vertice == to_vertice:
                 break
@@ -74,7 +77,7 @@ def shortest_path(graph, from_vertice, to_vertice):
 
             for neighbor in graph.neighbors(current_vertice):
                 if neighbor not in visited:
-                    work_list.append(neighbor)
+                    work_list.enqueue(neighbor)
                     parent[neighbor] = current_vertice
 
     def backtrack():

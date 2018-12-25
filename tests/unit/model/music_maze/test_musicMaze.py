@@ -553,6 +553,38 @@ class TestMusicMaze(TestCase):
 
         self.assertEqual(4, m.distance_from_path(0, 2))
 
+    def test_cells_two_by_two(self):
+        m = MusicMaze(3, 2, 2)
+
+        self.assertCountEqual(["(0, 0)", "(0, 1)", "(1, 0)", "(1, 1)"],
+                              m.get_cells())
+
+    def test_cells_three_by_three(self):
+        m = MusicMaze(5, 3, 3)
+
+        self.assertCountEqual(["(0, 0)", "(0, 1)", "(0, 2)",
+                               "(1, 0)", "(1, 1)", "(1, 2)",
+                               "(2, 0)", "(2, 1)", "(2, 2)"],
+                              m.get_cells())
+
+    def test_cells_five_by_three(self):
+        m = MusicMaze(7, 3, 5)
+
+        self.assertCountEqual(["(0, 0)", "(0, 1)", "(0, 2)",
+                               "(1, 0)", "(1, 1)", "(1, 2)",
+                               "(2, 0)", "(2, 1)", "(2, 2)",
+                               "(3, 0)", "(3, 1)", "(3, 2)",
+                               "(4, 0)", "(4, 1)", "(4, 2)"],
+                              m.get_cells())
+
+    def test_cells_three_by_five(self):
+        m = MusicMaze(7, 5, 3)
+
+        self.assertCountEqual(["(0, 0)", "(0, 1)", "(0, 2)", "(0, 3)", "(0, 4)",
+                               "(1, 0)", "(1, 1)", "(1, 2)", "(1, 3)", "(1, 4)",
+                               "(2, 0)", "(2, 1)", "(2, 2)", "(2, 3)", "(2, 4)"]
+                              , m.get_cells())
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)

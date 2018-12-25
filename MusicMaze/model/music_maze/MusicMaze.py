@@ -260,6 +260,13 @@ class MusicMaze:
             bool: if the player has reached the end cell"""
         return self.__player_pos == self.__end_pos
 
+    def get_cells(self):
+        """Returns the names of the cells.
+
+        Returns:
+            list(str): a list of the name of the cells."""
+        return [vertice.name() for vertice in self.__graph.vertices()]
+
     def __str__(self):
         """Represents a string representation of the maze. In this context,
         the maze looks like a series of Os representing the walls, spaces

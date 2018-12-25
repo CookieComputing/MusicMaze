@@ -153,6 +153,40 @@ class MusicMaze:
         Raises:
             IndexError: if the (row, col) pos is not in the graph"""
 
+        # return value is (cell, distance)
+        return self.__closest_cell_helper(row, col)[1]
+
+    def closest_cell_from_path(self, row, col):
+        """Given a row and column of a cell, determine the nearest cell that is
+        on the path from this cell. If the given position is in the
+        solution path, return that cell.
+
+        Args:
+            row(int): the row of the cell
+            col(int): the column of a cell
+        Returns:
+            str: the name of the cell.
+        Raises:
+            IndexError: If no such given cell position exists in the maze"""
+
+        # return value is (cell, distance)
+        return self.__closest_cell_helper(row, col)[0]
+
+    def __closest_cell_helper(self, row, col):
+        """Helper function that returns two useful pieces of data with regards
+        to the closest cell: The closest cell, as well as how far that given
+        cell is from the solution cell
+
+        Args:
+            row(int): the row of the given cell
+            col(int): the col of the given cell
+        Returns:
+            tuple: A tuple representing (cell, distance), where cell is the name
+                of the closest cell in the solution path, and distance is how
+                far the given cell is from that cell
+        Raises:
+            IndexError: If no such given cell position exists in the maze"""
+
         original_cell = cell_format.format(row, col)
         if not self.__graph.contains_vertice(original_cell):
             raise ValueError("Given invalid position")
@@ -167,11 +201,11 @@ class MusicMaze:
             visited.add(current_vertice)
             if current_vertice in solution_mapping:
                 distance_from_path = len(shortest_path(self.__graph,
-                                         original_cell,
-                                         current_vertice))
+                                                       original_cell,
+                                                       current_vertice))
                 if distance_from_path:
                     # removes the from node to prevent over counting
-                    return distance_from_path - 1
+                    return current_vertice, distance_from_path - 1
                 else:
                     return 0
 
@@ -179,7 +213,7 @@ class MusicMaze:
                 if neighbor not in visited:
                     work_list.append(neighbor)
 
-        return -1
+        return "", -1
 
     def solution_path(self):
         """Returns the path that represents the "correct" steps needed to move

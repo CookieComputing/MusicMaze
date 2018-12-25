@@ -585,6 +585,43 @@ class TestMusicMaze(TestCase):
                                "(2, 0)", "(2, 1)", "(2, 2)", "(2, 3)", "(2, 4)"]
                               , m.get_cells())
 
+    def test_get_neighbors_two_by_two(self):
+        m = MusicMaze(3, 2, 2, 1)
+
+        m_str = "X - O\n" \
+                "|   |\n" \
+                "O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertCountEqual(["(1, 0)", "(0, 1)"],
+                              m.get_connected_neighbors(0, 0))
+
+        self.assertCountEqual(["(0, 0)"], m.get_connected_neighbors(1, 0))
+        self.assertCountEqual(["(0, 0)", "(1, 1)"],
+                              m.get_connected_neighbors(0, 1))
+        self.assertCountEqual(["(0, 1)"], m.get_connected_neighbors(1, 1))
+
+    def test_get_neighbors_three_by_five(self):
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        self.assertCountEqual(["(0, 1)", "(1, 0)"],
+                              m.get_connected_neighbors(0, 0))
+        self.assertCountEqual(["(2, 1)"], m.get_connected_neighbors(2, 0))
+        self.assertCountEqual(["(2, 0)", "(1, 1)", "(2, 2)"],
+                              m.get_connected_neighbors(2, 1))
+        self.assertCountEqual(["(0, 2)", "(1, 3)", "(2, 2)"],
+                              m.get_connected_neighbors(1, 2))
+        self.assertCountEqual(["(0, 3)", "(1, 4)"],
+                              m.get_connected_neighbors(0, 4))
+        self.assertCountEqual(["(1, 4)"], m.get_connected_neighbors(2, 4))
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)
@@ -783,3 +820,12 @@ class TestMusicMaze(TestCase):
             self.fail("Should not be able to check out of bounds distances")
         except ValueError as e:
             self.assertEqual("Given invalid position", str(e))
+
+    def test_illegal_value_for_maze_neighbors(self):
+        model_maze = MusicMaze(3, 2, 2)
+
+        try:
+            model_maze.get_connected_neighbors(-1, 0)
+            self.fail("Should not be able to get connected components")
+        except IndexError as e:
+            self.assertEqual("Maze does not contain vertice", str(e))

@@ -267,6 +267,26 @@ class MusicMaze:
             list(str): a list of the name of the cells."""
         return [vertice.name() for vertice in self.__graph.vertices()]
 
+    def get_connected_neighbors(self, row, col):
+        """Returns the connected neighbors of this cell. In this context,
+        connected cells imply that it is possible for the player to directly
+        move from one of these cells to other cell.
+
+        Args:
+            row(int): the row of the cell to be queried
+            col(int): the column of the cell to be queried
+        Returns:
+            list(str): a list of cells indicating the cells that
+                are connected to this cell.
+        Raises:
+            IndexError: If the (row, col) does not exist
+        """
+        root_cell = cell_format.format(row, col)
+        if not self.__graph.contains_vertice(root_cell):
+            raise IndexError("Maze does not contain vertice")
+
+        return self.__graph.neighbors(root_cell)
+
     def __str__(self):
         """Represents a string representation of the maze. In this context,
         the maze looks like a series of Os representing the walls, spaces

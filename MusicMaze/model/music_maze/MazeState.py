@@ -83,6 +83,29 @@ class MazeState:
             bool: whether or not the game has been completed"""
         return self.__music_maze.game_over()
 
+    def get_connected_neighbors(self, row, col):
+        """Returns the connected neighbors of this cell. In this context,
+        connected cells imply that it is possible for the player to directly
+        move from one of these cells to other cell.
+
+        Args:
+            row(int): the row of the cell to be queried
+            col(int): the column of the cell to be queried
+        Returns:
+            list(tuple(int, int)): a list of cells indicating the cells that
+                are connected to this cell.
+        Raises:
+            IndexError: If the (row, col) does not exist
+        """
+        cell_list = self.__music_maze.get_connected_neighbors(row, col)
+        result = []
+
+        for cell in cell_list:
+            row, col = self.__cell_split(cell)
+            result.append((row, col))
+
+        return result
+
     @staticmethod
     def __cell_split(cell):
         """Splits a cell apart from its string form and returns it as a

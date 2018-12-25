@@ -622,6 +622,33 @@ class TestMusicMaze(TestCase):
                               m.get_connected_neighbors(0, 4))
         self.assertCountEqual(["(1, 4)"], m.get_connected_neighbors(2, 4))
 
+    def test_restart_three_by_five(self):
+        m = MusicMaze(7, 5, 3, 1)
+
+        m_str = "O - O   O - O - O\n" \
+                "|       |       |\n" \
+                "O - O   O - X   O\n" \
+                "    |   |       |\n" \
+                "O - O - O - O   O"
+        self.assertEqual(m_str, str(m))
+
+        m.restart()
+        self.assertEqual(m_str, str(m))
+
+        m.move_player(1, 2)
+        m.move_player(2, 2)
+        m.move_player(2, 1)
+        m.move_player(2, 0)
+        m_str_four_move = "O - O   O - O - O\n" \
+                          "|       |       |\n" \
+                          "O - O   O - O   O\n" \
+                          "    |   |       |\n" \
+                          "X - O - O - O   O"
+        self.assertEqual(m_str_four_move, str(m))
+
+        m.restart()
+        self.assertEqual(m_str, str(m))
+
     def test_negative_length_constructor(self):
         try:
             MusicMaze(-1, 2, 3)

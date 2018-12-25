@@ -287,6 +287,11 @@ class MusicMaze:
 
         return self.__graph.neighbors(root_cell)
 
+    def restart(self):
+        """Resets the player's position to the initial starting position,
+        allowing the player to restart the maze."""
+        self.__player_pos = self.__starting_pos
+
     def __str__(self):
         """Represents a string representation of the maze. In this context,
         the maze looks like a series of Os representing the walls, spaces

@@ -207,7 +207,7 @@ class MusicMaze:
                     # removes the from node to prevent over counting
                     return current_vertice, distance_from_path - 1
                 else:
-                    return 0
+                    return current_vertice, 0
 
             for neighbor in self.__graph.neighbors(current_vertice):
                 if neighbor not in visited:
